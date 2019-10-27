@@ -1,4 +1,4 @@
-setwd("~/Dropbox/Documents/Research/age-specific-incidence/epp-asm-paper/analysis/")
+setwd("~/Dropbox/Documents/Research/age-specific-incidence/epp-asm-paper/analysis-revision1/")
 
 #' # 0. Load packages and model inputs
 
@@ -57,12 +57,24 @@ mrcq <- didehpc::queue_didehpc(ctx, config=mrc_config, initialise=TRUE)
 
 #' Full data
 
+
 mrcq$lapply(inputs, fitmod, name = "fit_rspline", eppmod = "rspline", equil.rprior = TRUE,
             B0=1e5, B=1e3, number_k = 500, opt_iter = 1:5*5)
 mrcq$lapply(inputs, fitmod, name = "fit_rtrend", eppmod = "rtrend",
             B0=1e4, B=1e3, number_k = 500, opt_iter = 1:5*5)
 mrcq$lapply(inputs, fitmod, name = "fit_rhybrid", eppmod = "rhybrid",
             B0=1e4, B=1e3, number_k = 500, opt_iter = 1:5*5)
+
+#' Full data, various knot spacings
+#' 
+mrcq$lapply(inputs, fitmod, name = "fit_rhybrid_dk1", eppmod = "rhybrid", rw_dk = 1,
+            B0=1e4, B=1e3, number_k = 1000, opt_iter = 1:5*5)
+mrcq$lapply(inputs, fitmod, name = "fit_rhybrid_dk2", eppmod = "rhybrid", rw_dk = 2,
+            B0=1e4, B=1e3, number_k = 1000, opt_iter = 1:5*5)
+mrcq$lapply(inputs, fitmod, name = "fit_rhybrid_dk3", eppmod = "rhybrid", rw_dk = 3,
+            B0=1e4, B=1e3, number_k = 1000, opt_iter = 1:5*5)
+mrcq$lapply(inputs, fitmod, name = "fit_rhybrid_dk4", eppmod = "rhybrid", rw_dk = 4,
+            B0=1e4, B=1e3, number_k = 1000, opt_iter = 1:5*5)
 
 
 #' Full data without pregprev
@@ -91,6 +103,12 @@ rspline <- mrcq$task_bundle_get("fit_rspline")$results()
 rtrend <- mrcq$task_bundle_get("fit_rtrend")$results()
 rhybrid <- mrcq$task_bundle_get("fit_rhybrid")$results()
 
+rhybrid_dk1 <- mrcq$task_bundle_get("fit_rhybrid_dk1")$results()
+rhybrid_dk2 <- mrcq$task_bundle_get("fit_rhybrid_dk2")$results()
+rhybrid_dk3 <- mrcq$task_bundle_get("fit_rhybrid_dk3")$results()
+rhybrid_dk4 <- mrcq$task_bundle_get("fit_rhybrid_dk4")$results()
+
+
 rspline_nopreg <- mrcq$task_bundle_get("fit_rspline_nopreg")$results()
 rtrend_nopreg <- mrcq$task_bundle_get("fit_rtrend_nopreg")$results()
 rhybrid_nopreg <- mrcq$task_bundle_get("fit_rhybrid_nopreg")$results()
@@ -99,18 +117,28 @@ rhybrid_nopreg <- mrcq$task_bundle_get("fit_rhybrid_nopreg")$results()
 rhybrid <- lapply(rhybrid, extend_projection, 52L)
 rhybrid_nopreg <- lapply(rhybrid_nopreg, extend_projection, 52L)
 
+rhybrid_dk1 <- lapply(rhybrid_dk1, extend_projection, 52L)
+rhybrid_dk2 <- lapply(rhybrid_dk2, extend_projection, 52L)
+rhybrid_dk3 <- lapply(rhybrid_dk3, extend_projection, 52L)
+rhybrid_dk4 <- lapply(rhybrid_dk4, extend_projection, 52L)
+
 #' Simulate outputs
 unregion <- sapply(inputs, attr, "unregion")
 country <- sapply(inputs, attr, "country")
 eppregion <- sapply(inputs, attr, "region")
 
-mrcq$mapply(tidy_output, rspline, "rspline", country, eppregion, FALSE, name = "out_rspline")
+mrcq$mapply(tidy_output, rspline, "rspline", country, eppregion, FALSE, name = "out_rspline",)
 mrcq$mapply(tidy_output, rtrend, "rtrend", country, eppregion, FALSE, name = "out_rtrend")
 mrcq$mapply(tidy_output, rhybrid, "rhybrid", country, eppregion, FALSE, name = "out_rhybrid")
 
 mrcq$mapply(tidy_output, rspline_nopreg, "rspline: no preg", country, eppregion, FALSE, name = "out_rspline_nopreg")
 mrcq$mapply(tidy_output, rtrend_nopreg, "rtrend: no preg", country, eppregion, FALSE, name = "out_rtrend_nopreg")
 mrcq$mapply(tidy_output, rhybrid_nopreg, "rhybrid: no preg", country, eppregion, FALSE, name = "out_rhybrid_nopreg")
+
+mrcq$mapply(tidy_output, rhybrid_dk1, "rhybrid: dk=1", country, eppregion, FALSE, name = "out_rhybrid_dk1")
+mrcq$mapply(tidy_output, rhybrid_dk2, "rhybrid: dk=2", country, eppregion, FALSE, name = "out_rhybrid_dk2")
+mrcq$mapply(tidy_output, rhybrid_dk3, "rhybrid: dk=3", country, eppregion, FALSE, name = "out_rhybrid_dk3")
+mrcq$mapply(tidy_output, rhybrid_dk4, "rhybrid: dk=4", country, eppregion, FALSE, name = "out_rhybrid_dk4")
 
 
 mrcq$lapply(rspline, get_param, name = "param_rspline")
@@ -125,6 +153,10 @@ mrcq$lapply(rhybrid_nopreg, get_param, name = "param_rhybrid_nopreg")
 out <- c(mrcq$task_bundle_get("out_rspline")$results(),
          mrcq$task_bundle_get("out_rtrend")$results(),
          mrcq$task_bundle_get("out_rhybrid")$results(),
+         mrcq$task_bundle_get("out_rhybrid_dk4")$results(),
+         mrcq$task_bundle_get("out_rhybrid_dk3")$results(),
+         mrcq$task_bundle_get("out_rhybrid_dk2")$results(),
+         mrcq$task_bundle_get("out_rhybrid_dk1")$results(),
          mrcq$task_bundle_get("out_rspline_nopreg")$results(),
          mrcq$task_bundle_get("out_rtrend_nopreg")$results(),
          mrcq$task_bundle_get("out_rhybrid_nopreg")$results()) %>%
@@ -137,7 +169,7 @@ out <- c(mrcq$task_bundle_get("out_rspline")$results(),
                 mutate(indicator = "pregprev"))
   ) %>%
   bind_rows %>%
-  filter(year %in% 1980:2020) %>%
+  filter(year %in% 1980:2021) %>%
   left_join(data.frame(unregion, country) %>% unique) %>%
   select(unregion, everything())
 
@@ -171,9 +203,26 @@ param <- param %>%
             lower = quantile(value, 0.025, na.rm=TRUE),
             upper = quantile(value, 0.975, na.rm=TRUE))
 
-            
+
+#' number of IMIS iterations
+
+imis_iter <- list("rhybrid: dk=5" = rhybrid,
+     "rhybrid: dk=4" = rhybrid_dk4,
+     "rhybrid: dk=3" = rhybrid_dk3,
+     "rhybrid: dk=2" = rhybrid_dk2,
+     "rhybrid: dk=1" = rhybrid_dk1,
+     "rspline" = rspline,
+     "rtrend" = rtrend) %>%
+  lapply(lapply, "[[", "stat") %>%
+  lapply(sapply, nrow) %>%
+  Map(data.frame, modlab = names(.), region = lapply(., names), imis_iter = .) %>%
+  bind_rows()
+     
+     
 saveRDS(out, here::here("fits", "outputs.rds"))
 saveRDS(param, here::here("fits", "parameters.rds"))
+saveRDS(imis_iter, here::here("fits", "imis_iter.rds"))
+
 
 
 #' # 4. Simulate out of sample predictions for LOO fits
@@ -216,3 +265,106 @@ inpred <- bind_rows(
 
 saveRDS(outpred, here::here("fits", "outpred.rds"))
 saveRDS(inpred, here::here("fits", "inpred.rds"))
+
+
+#' # 5. Malawi Central outputs for appendix
+
+fit <- rhybrid[["Malawi - Central Region"]]
+fit <- extend_projection(fit, 52L)
+
+ss <- fit$fp$ss
+
+year <- fit$fp$ss$proj_start + 1:fit$fp$ss$PROJ_YEARS - 1L
+
+
+## simulate model projections
+param_list <- lapply(seq_len(nrow(fit$resample)), function(ii) fnCreateParam(fit$resample[ii,], fit$fp))
+
+fp_list <- lapply(param_list, function(par) update(fit$fp, list=par))
+mod_list <- lapply(fp_list, simmod)
+
+add_mod_names <- function(mod) {
+  dimnames(mod) <- list(age = 15:80,
+                        sex = c("male", "female"),
+                        hivstatus = c("negative", "positive"),
+                        year = year)
+  
+  dimnames(attr(mod, "infections")) <- dimnames(mod)[c(1,2,4)]
+  dimnames(attr(mod, "hivdeaths")) <- dimnames(mod)[c(1,2,4)]
+  mod
+}
+
+merge_mod <- function(mod) {
+  as.data.frame.table(apply(mod, c(1:2, 4), sum),
+                      responseName = "totpop") %>%
+    left_join(as.data.frame.table(mod[,,2,], responseName = "hivpop"),
+              by = c("age", "sex", "year")) %>%
+    left_join(as.data.frame.table(attr(mod, "infections"), responseName = "infections"),
+              by = c("age", "sex", "year")) %>%
+    left_join(as.data.frame.table(attr(mod, "hivdeaths"), responseName = "hivdeaths"),
+              by = c("age", "sex", "year")) %>%
+  type.convert() %>%
+    left_join(
+    {.} %>%
+    transmute(age, sex, year = year + 1, totpop_last = totpop, suscpop_last = totpop - hivpop),
+    by = c("age", "sex", "year")
+    )
+}
+
+
+calc_agecat_output <- function(mod) {
+
+  mod %>%
+    add_mod_names() %>%
+    merge_mod() %>%
+    mutate(agecat = cut(age, c(15, 25, 35, 50, Inf), c("15-24", "25-34", "35-49", "50+"), TRUE, FALSE)) %>%
+    group_by(sex, agecat, year) %>%
+    summarise_at(vars(totpop:suscpop_last), sum) %>%
+    group_by(sex, agecat, year) %>%
+    transmute(prev = hivpop / totpop,
+              incid = infections / suscpop_last,
+              aidsmx = hivdeaths / suscpop_last)
+}
+
+calc_age1_output <- function(mod, year = seq(1985, 2020, 5)) {
+
+  mod %>%
+    add_mod_names() %>%
+    merge_mod() %>%
+    filter(year %in% !!year)%>%
+    group_by(sex, age, year) %>%
+    summarise_at(vars(totpop:suscpop_last), sum) %>%
+    group_by(sex, age, year) %>%
+    transmute(prev = hivpop / totpop,
+              incid = infections / suscpop_last,
+              aidsmx = hivdeaths / suscpop_last)
+}
+
+
+system.time(out_agecat <- parallel::mclapply(mod_list, calc_agecat_output, mc.cores = 10))
+
+mwi_central_agecat_out <- out_agecat %>%
+  bind_rows() %>%
+  gather(indicator, value, prev, incid, aidsmx) %>%
+  group_by(sex, agecat, year, indicator) %>%
+  summarise(mean = mean(value, na.rm = TRUE),
+            median = median(value, na.rm = TRUE),
+            lower = quantile(value, 0.025, na.rm = TRUE),
+            upper = quantile(value, 0.975, na.rm = TRUE))
+
+
+system.time(out_age1 <- parallel::mclapply(mod_list, calc_age1_output, mc.cores = 10))
+
+mwi_central_age1_out <- out_age1 %>%
+  bind_rows() %>%
+  gather(indicator, value, prev, incid, aidsmx) %>%
+  group_by(sex, age, year, indicator) %>%
+  summarise(mean = mean(value, na.rm = TRUE),
+            median = median(value, na.rm = TRUE),
+            lower = quantile(value, 0.025, na.rm = TRUE),
+            upper = quantile(value, 0.975, na.rm = TRUE))
+
+
+
+saveRDS(mwi_central_agecat_out, here::here("fits", "mwi_central_agecat_out.rds"))
+saveRDS(mwi_central_age1_out, here::here("fits", "mwi_central_age1_out.rds"))
