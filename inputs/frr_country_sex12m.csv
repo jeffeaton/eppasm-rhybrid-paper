@@ -1,0 +1,43 @@
+﻿region,country_code,country,sex12m,sex12m_source,frr_country
+West/Central,24,Angola,53,2015-16 DHS,0.94944768
+West/Central,204,Benin,43.7,2014 MICS,1
+South,72,Botswana,50.8,1988 DHS,1
+West/Central,854,Burkina Faso,39,2010 DHS,1.01217679
+East,108,Burundi,10.7,2016-17 DHS,0.96995088
+West/Central,132,Cabo Verde,43.9,WCA average,1
+West/Central,120,Cameroon,44.3,2014 MICS,0.92857403
+West/Central,140,Central African Republic,64.6,2010 MICS,1
+West/Central,148,Chad,44.3,2014-15 DHS,0.84846779
+West/Central,174,Comoros,18.4,2012 DHS,1
+West/Central,178,Congo,52.8,2014-15 MICS,1.06230997
+West/Central,180,Democratic Republic of the Congo,44.7,2013-14 DHS,0.94388106
+West/Central,384,Côte d'Ivoire,50.6,2016 MICS,0.98971353
+West/Central,226,Equatorial Guinea,43.9,WCA average,1
+East,232,Eritrea,28,2002 DHS,1
+East,231,Ethiopia,20.8,2016 DHS,0.80016184
+West/Central,266,Gabon,60.2,2012 DHS,1.23171071
+West/Central,270,Gambia,22.1,2013 DHS,0.96786547
+West/Central,288,Ghana,32.3,2014 DHS,1.09332831
+West/Central,324,Guinea,39.2,2016 MICS,0.8556093
+West/Central,624,Guinea-Bissau,61.3,2014 MICS,1
+East,404,Kenya,26.7,2014 DHS,1.1134265
+South,426,Lesotho,45.9,2014 DHS,0.97963077
+West/Central,430,Liberia,65,2013 DHS,1.09644326
+East,450,Madagascar,49,2008-09 DHS,1
+East,454,Malawi,43.9,2015-16 PHIA,1.00517579
+West/Central,466,Mali,50.5,2012-13 DHS,1.05740064
+South,508,Mozambique,64.2,2015 AIS,0.95582221
+South,516,Namibia,45.1,2013 DHS,1.15154851
+West/Central,562,Niger,59.3,2012 DHS,0.98817742
+West/Central,566,Nigeria,39.9,2013 DHS,1
+East,646,Rwanda,10.8,2014-15 DHS,1.00008025
+West/Central,678,Sao Tome and Principe,41,2014 MICS,1
+West/Central,686,Senegal,23.4,2016 DHS,1.10161765
+West/Central,694,Sierra Leone,57.8,2013 DHS,1.0057343
+South,710,South Africa,40.3,2016 DHS,1.15497532
+South,748,Swaziland,29.4,2017 PHIA,1.19344713
+East,834,United Republic of Tanzania,52.2,2015-16 DHS,0.97513993
+West/Central,768,Togo,39.4,2013-14 DHS,0.96328774
+East,800,Uganda,45.7,2016 DHS,0.94755815
+East,894,Zambia,35.3,2015-16 PHIA,0.89194028
+South,716,Zimbabwe,28.9,2015-16 PHIA,1.00202335
